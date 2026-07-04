@@ -91,7 +91,7 @@ if(!user){
 }
 const isMatch = await  bcrypt.compare(password,user.password)
 if (!isMatch){
-  return res.status(401).json({
+  return res.status(400).json({
     errors:["password does not match"],
     oldInput:{email}
   })
@@ -104,4 +104,8 @@ const token =jwt.sign(
 )
 res.status(200).cookie("token",token,{httpOnly: true,
     maxAge: 3600000}).json({ userId: user._id, userType: user.userType })
+}
+
+exports.postLogout = (req, res) => {
+  res.clearCookie("token", { httpOnly: true }).status(200).json({ message: "Logged out successfully" })
 }

@@ -5,17 +5,57 @@ import {createBrowserRouter,RouterProvider} from "react-router-dom"
 import Home from "./pages/Home.jsx"
 import Login from "./pages/Login.jsx"
 import Register from "./pages/Register.jsx"
+import Addhome from "./pages/Add-Home.jsx"
+import 'leaflet/dist/leaflet.css';
 import App from './App.jsx'
 import { Provider } from "react-redux"       
 import store from "./store/store.js"  
+import ProtectedRoute from "./components/Protected.jsx"
+import axios from "axios"  
 import "bootstrap/dist/css/bootstrap.min.css" 
+import HostHome from "./pages/Host-Home.jsx"
+import HomeDetails from "./pages/Home-details.jsx"
+import FavouriteHomes from "./pages/favouritesHome.jsx"
+import MyBookings from "./pages/booking.jsx"
+axios.defaults.withCredentials = true
+axios.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response?.status === 401) {
+      window.location.href = "/login"
+    }
+    if (error.response?.status === 403) {
+      window.location.href = "/"
+    }
+    return Promise.reject(error)
+  }
+)
 const router=createBrowserRouter([{
   path:"/",
   element:  <App />,
   children:[
     {path:"/",element:<Home/> },
     {path:"/login",element:<Login/>},
-    {path:"/signup",element:<Register/>}
+    {path:"/signup",element:<Register/>},
+    {path:"/details/:id",element:<HomeDetails/>},
+    {path:"/mybookings",element:<MyBookings/>},
+    {path:"/host/add-home",element:<ProtectedRoute allowedType="host">
+      <Addhome/>
+      </ProtectedRoute>},
+      {path:"/host/myhomes",element:<ProtectedRoute allowedType="host">
+      <HostHome/>
+      </ProtectedRoute>},
+       {path:`/host/edit-home/:id`,element:<ProtectedRoute allowedType="host">
+      <Addhome/>
+      </ProtectedRoute>},
+       {path:"/favourites",element:<ProtectedRoute allowedType="guest">
+      <FavouriteHomes/>
+      </ProtectedRoute>},
+
+      
+
+
+    
   
   ]
 }])

@@ -1,0 +1,44 @@
+const mongoose =require("mongoose")
+const bookingSchema=mongoose.Schema({
+  home:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"Home",
+    required:true
+  },
+  user:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"User",
+    required:true
+  },
+  checkIn:{
+    type:Date,
+    required:true
+  },
+  checkOut:{
+    type:Date,
+    required:true
+  },
+  guests:{
+    adults:{
+      type:Number,
+      required:true,
+      default:1
+    },
+    children:{
+       type:Number,
+      required:true,
+      default:0
+    },
+    infants:{
+       type:Number,
+      required:true,
+      default:0
+    }
+  },
+  totalPrice:{
+    type:Number,
+    required:true
+  }
+})
+
+module.exports=mongoose.model("Booking",bookingSchema)

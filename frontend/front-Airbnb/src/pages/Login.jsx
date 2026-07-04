@@ -25,7 +25,7 @@ axios.post("http://localhost:8080/login",data)
   navigate("/")
 })
 .catch(err=>{
-  setErrors(err.response.data.errors),
+  setErrors(err.response.data.errors);
   setOldInput(err.response.data.oldInput)
 
 })

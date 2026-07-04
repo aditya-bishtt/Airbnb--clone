@@ -44,14 +44,12 @@ const [selectedCategory,setSelectedCategory]=useState("All")
   }
   // const  filteredHomes=useState([]);
   const   filteredHomes=selectedCategory==="All"?registeredHomes:registeredHomes.filter(home=>home.category===selectedCategory);
-  if (loading) {
-    return <div style={{ textAlign: "center", marginTop: "5rem", fontSize: "18px" }}>Loading...</div>
-  }
+  
 
   return (
     <div style={{ fontFamily: "sans-serif" }}>
 
-      {/* ===== HERO SECTION (pure UI, no logic) ===== */}
+
       <div style={{
         position: "relative",
         width: "100%",
@@ -63,7 +61,7 @@ const [selectedCategory,setSelectedCategory]=useState("All")
         marginBottom: 0
       }}>
 
-        {/* Bottom fade so hero blends into page instead of a hard cut */}
+
         <div style={{
           position: "absolute",
           left: 0,
@@ -74,7 +72,7 @@ const [selectedCategory,setSelectedCategory]=useState("All")
           pointerEvents: "none"
         }} />
 
-        {/* Content on top of image */}
+      
         <div style={{
           position: "relative",
           zIndex: 2,
@@ -94,7 +92,7 @@ const [selectedCategory,setSelectedCategory]=useState("All")
             Discover unique homes and unforgettable experiences
           </p>
 
-          {/* Search bar (visual only) */}
+       
         <SearchBar registredHomes={registeredHomes}></SearchBar>
             
           
@@ -102,7 +100,6 @@ const [selectedCategory,setSelectedCategory]=useState("All")
         </div>
       </div>
 
-      {/* ===== CATEGORY ICONS (visual only) ===== */}
       <div style={{
         display: "flex",
         justifyContent: "center",
@@ -130,7 +127,7 @@ const [selectedCategory,setSelectedCategory]=useState("All")
         ))}
       </div>
 
-      {/* ===== LISTINGS GRID ===== */}
+  
       <div style={{ width: "100%", maxWidth: "1280px", margin: "2rem auto", padding: "0 2rem", boxSizing: "border-box" }}>
 
         <div style={{ 
@@ -141,7 +138,7 @@ const [selectedCategory,setSelectedCategory]=useState("All")
           justifyContent: "start"
         }}>
           
-          {filteredHomes.length === 0 ? (
+          {loading&&filteredHomes.length === 0 ? (
             <p style={{ gridColumn: "1 / -1", textAlign: "center" }}>no home</p>
           ) : (
             filteredHomes.map(home => (
@@ -155,7 +152,7 @@ const [selectedCategory,setSelectedCategory]=useState("All")
                 }}
               >
                 
-                {/* Image with heart overlay */}
+         \
                 <div style={{ position: "relative", width: "100%", height: "210px", borderRadius: "14px", overflow: "hidden", marginBottom: "10px" }}>
                   <img 
                     src={`http://localhost:8080${home.photo}`} 

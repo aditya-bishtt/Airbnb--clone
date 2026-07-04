@@ -1,3 +1,5 @@
+require("dotenv").config()
+
 const express = require("express")
 const mongoose = require("mongoose")
 const authRouter = require("./router/authRouter")
@@ -11,7 +13,7 @@ const cookieParser = require("cookie-parser")
 const port=8080;
 const DB_PATH="mongodb+srv://aditya:aditya@cluster1.mtfdigo.mongodb.net/newReactairbnb?appName=cluster1"
 app.use(cors({
-origin:"http://localhost:5173",
+origin:["http://localhost:5173", "https://airbnb-clone-five-mauve.vercel.app"],
 credentials:true
 }
   

@@ -1,7 +1,6 @@
-
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import {createBrowserRouter,RouterProvider} from "react-router-dom"
+import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import Home from "./pages/Home.jsx"
 import Login from "./pages/Login.jsx"
 import Register from "./pages/Register.jsx"
@@ -11,14 +10,18 @@ import App from './App.jsx'
 import { Provider } from "react-redux"       
 import store from "./store/store.js"  
 import ProtectedRoute from "./components/Protected.jsx"
-import axios from "axios"  
+
+import api from "./api/axios"  
 import "bootstrap/dist/css/bootstrap.min.css" 
 import HostHome from "./pages/Host-Home.jsx"
 import HomeDetails from "./pages/Home-details.jsx"
 import FavouriteHomes from "./pages/favouritesHome.jsx"
 import MyBookings from "./pages/booking.jsx"
-axios.defaults.withCredentials = true
-axios.interceptors.response.use(
+
+
+api.defaults.withCredentials = true
+
+api.interceptors.response.use(
   response => response,
   error => {
     if (error.response?.status === 401) {
@@ -30,41 +33,39 @@ axios.interceptors.response.use(
     return Promise.reject(error)
   }
 )
-const router=createBrowserRouter([{
-  path:"/",
-  element:  <App />,
-  children:[
-    {path:"/",element:<Home/> },
-    {path:"/login",element:<Login/>},
-    {path:"/signup",element:<Register/>},
-    {path:"/details/:id",element:<HomeDetails/>},
-    {path:"/mybookings",element:<MyBookings/>},
-    {path:"/host/add-home",element:<ProtectedRoute allowedType="host">
-      <Addhome/>
-      </ProtectedRoute>},
-      {path:"/host/myhomes",element:<ProtectedRoute allowedType="host">
-      <HostHome/>
-      </ProtectedRoute>},
-       {path:`/host/edit-home/:id`,element:<ProtectedRoute allowedType="host">
-      <Addhome/>
-      </ProtectedRoute>},
-       {path:"/favourites",element:<ProtectedRoute allowedType="guest">
-      <FavouriteHomes/>
-      </ProtectedRoute>},
 
-      
-
-
-    
-  
+const router = createBrowserRouter([{
+  path: "/",
+  element: <App />,
+  children: [
+    { path: "/", element: <Home /> },
+    { path: "/login", element: <Login /> },
+    { path: "/signup", element: <Register /> },
+    { path: "/details/:id", element: <HomeDetails /> },
+    { path: "/mybookings", element: <MyBookings /> },
+    { 
+      path: "/host/add-home", 
+      element: <ProtectedRoute allowedType="host"><Addhome /></ProtectedRoute>
+    },
+    { 
+      path: "/host/myhomes", 
+      element: <ProtectedRoute allowedType="host"><HostHome /></ProtectedRoute>
+    },
+    { 
+      path: `/host/edit-home/:id`, 
+      element: <ProtectedRoute allowedType="host"><Addhome /></ProtectedRoute>
+    },
+    { 
+      path: "/favourites", 
+      element: <ProtectedRoute allowedType="guest"><FavouriteHomes /></ProtectedRoute>
+    },
   ]
 }])
+
 createRoot(document.getElementById('root')).render(
-  
   <StrictMode>
-   <Provider store={store}>
-   <RouterProvider router={router}/>
-   </Provider>
-   
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
   </StrictMode>,
 )

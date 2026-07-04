@@ -3,7 +3,7 @@ const verifyToken=(req,res,next)=>{
 const token = req.cookies.token;
 if(!token) return res.status(401).json({error:"Not authenticated",redirect:"/login"}
 ) 
-jwt.verify(token,"Aditya@29623528512307",(err,decoded)=>{
+jwt.verify(token,process.env.PASSWORD_,(err,decoded)=>{
   if(err) return res.status(401).json({error:"invalidtoken",redirect:"/login"})
     req.user=decoded
   next();
@@ -27,7 +27,7 @@ const optionalAuth = (req, res, next) => {
   const token = req.cookies.token
   if (!token) return next()
   
-  jwt.verify(token, "Aditya@29623528512307", (err, decoded) => {
+  jwt.verify(token, process.env.PASSWORD_, (err, decoded) => {
     if (err) return next()
     req.user = decoded
     next()

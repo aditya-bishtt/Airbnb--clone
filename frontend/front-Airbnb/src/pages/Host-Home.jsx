@@ -1,41 +1,44 @@
 // import {useState,useEffect} from "react"
-import axios from "axios"
-import {useEffect} from "react"
-import {useSelector,useDispatch} from "react-redux"
+import { useEffect } from "react"
+import { useSelector, useDispatch } from "react-redux"
 import { fetchHomeStart, fetchmyHomeSuccess, fetchHomeFaliure } from "../store/homeSlice"
-import {Link,useNavigate} from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
-const  HostHome =()=>{
+import api from "../api/axios"
 
-  const dispatch=useDispatch();
-  const navigate=useNavigate();
+const HostHome = () => {
 
-  const {myOwnHomes, loading} = useSelector(store=>store.homes)
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { myOwnHomes, loading } = useSelector(store => store.homes)
   
-  // ⛔ Tumhaara original handler logic (Bilkul haath nahi lagaya)
-  const handleOnDelete=((e,id)=>{
+  
+  const handleOnDelete = ((e, id) => {
     e.preventDefault();
-    axios.post(`http://localhost:8080/host/delete-home/${id}`,{}).then(res=>{
+
+    api.post(`/host/delete-home/${id}`, {}).then(res => {
       console.log(res.data.message);
       navigate("/")
-    }).catch(err=>{
-      console.log(err.response.data.message)
+    }).catch(err => {
+      console.log(err.response?.data?.message || err.message)
       navigate("/host/myhomes")
     })
   })
 
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(fetchHomeStart())
-    axios.get("http://localhost:8080/host/myhomes").then(res=>{
+    // 3. 'axios.get' ko 'api.get' aur base URL ko relative path se badla
+    api.get("/host/myhomes").then(res => {
       console.log(res.data.registeredHomes)
-      dispatch(fetchmyHomeSuccess(res.data.registeredHomes||[]))
-    }).catch(err=>{
-      console.log(err.response.data.message||err.message)
+      dispatch(fetchmyHomeSuccess(res.data.registeredHomes || []))
+    }).catch(err => {
+      console.log(err.response?.data?.message || err.message)
       dispatch(fetchHomeFaliure())
     })
-  },[dispatch])
+  }, [dispatch])
 
-  if(loading){
+  if (loading) {
     return <div style={{ textAlign: "center", marginTop: "5rem", fontSize: "18px" }}>Loading...</div>
   }
 
@@ -83,10 +86,11 @@ const  HostHome =()=>{
               }}
             >
               
-              {/* Image Container */}
+            
               <div style={{ width: "100%", height: "200px", borderRadius: "14px", overflow: "hidden", marginBottom: "14px" }}>
                 <img 
-                  src={`http://localhost:8080${home.photo}`} 
+                 
+                  src={`${import.meta.env.VITE_API_URL}${home.photo}`} 
                   alt={home.title} 
                   style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.3s ease" }}
                   onMouseOver={(e) => e.currentTarget.style.transform = "scale(1.04)"}
@@ -94,16 +98,15 @@ const  HostHome =()=>{
                 />
               </div>
               
-              {/* Info & Beautiful Buttons */}
+              
               <div style={{ padding: "0 6px", display: "flex", flexDirection: "column", flexGrow: 1 }}>
                 <h3 style={{ margin: "0 0 6px 0", fontSize: "18px", fontWeight: "600", color: "#222222", textTransform: "capitalize" }}>{home.title}</h3>
                 <p style={{ margin: "0 0 8px 0", color: "#717171", fontSize: "14px", display: "flex", alignItems: "center", gap: "4px" }}>📍 {home.place}</p>
                 <p style={{ margin: "0 0 18px 0", fontWeight: "700", fontSize: "16px", color: "#222222" }}>₹{home.price} <span style={{ fontWeight: "400", color: "#717171", fontSize: "14px" }}>/ night</span></p>
-                
-                {/* ✨ Dashing Airbnb Style Buttons Row */}
+              
                 <div style={{ display: "flex", gap: "10px", marginTop: "auto" }}>
                   
-                  {/* Premium Edit Button */}
+               
                   <Link 
                     to={`/host/edit-home/${home._id}`} 
                     style={{ 
@@ -127,10 +130,10 @@ const  HostHome =()=>{
                     ✏️ Edit
                   </Link>
                   
-                  {/* Premium Delete Button */}
+              
                   <button 
                     type="button"  
-                    onClick={(e)=>handleOnDelete(e,home._id)}
+                    onClick={(e) => handleOnDelete(e, home._id)}
                     style={{
                       flex: 1,
                       backgroundColor: "#ffffff",

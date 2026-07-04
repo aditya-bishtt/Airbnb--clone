@@ -1,28 +1,30 @@
-import {useState,useEffect} from "react"
-import {useParams,useNavigate} from "react-router-dom"
+import { useState, useEffect } from "react"
+import { useParams, useNavigate } from "react-router-dom"
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import defaultIcon from '../leafletConfig';
-import axios from "axios"
-import GuestSelector from  '../components/GuestSelector'
+
+import api from "../api/axios"
+import GuestSelector from '../components/GuestSelector'
 import Calender from '../components/calender'
 
-const HomeDetails= ()=>{
-  const [loading,setLoading]=useState(false)
-  const {id}=useParams();
+const HomeDetails = () => {
+  const [loading, setLoading] = useState(false)
+  const { id } = useParams();
   const [home, setHome] = useState({})
-  const navigate=useNavigate();
-  const [selectedGuests,setSelectedGuests]=useState({
+  const navigate = useNavigate();
+  const [selectedGuests, setSelectedGuests] = useState({
     adults: 1,
     children: 0,
     infants: 0
   })
-  const [selectedDates,setSelectedDates]=useState({
+  const [selectedDates, setSelectedDates] = useState({
     checkIn: null,
     checkOut: null
   })
+  const [errors, setErrors] = useState("")
 
-  const handleDataChange=(updatedDates)=>{
+  const handleDataChange = (updatedDates) => {
     setSelectedDates(updatedDates);
     console.log("Updated Dates in Parent:", updatedDates);
   }
@@ -32,48 +34,50 @@ const HomeDetails= ()=>{
     console.log("Updated Guests in Parent:", updatedGuests); 
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     setLoading(true)
     
-    axios.get(`http://localhost:8080/details/${id}`).then((res)=>{
+    
+    api.get(`/details/${id}`).then((res) => {
       console.log(res.data.home)
       setHome(res.data.home)
       setLoading(false)
-    }).catch(err=>{
-      console.log(err.response.data.message||err.message)
+    }).catch(err => {
+      console.log(err.response?.data?.message || err.message)
       setLoading(false)
       navigate("/")
     })
-  },[id,navigate])
-  const [errors,setErrors]=useState("")
+  }, [id, navigate])
 
-   const handleonReserve=(e,homeId,newCheckIn,newCheckOut,guests)=>{
- 
+  const handleonReserve = (e, homeId, newCheckIn, newCheckOut, guests) => {
     e.preventDefault()
-       if (!newCheckIn || !newCheckOut) {
-  setErrors("Kripya check-in aur check-out date select karein");
-  return;
-}
-    const data={
-      homeId:homeId,
-      checkIn:newCheckIn,
-      checkOut:newCheckOut,
-      guests:guests
+    if (!newCheckIn || !newCheckOut) {
+      setErrors("Kripya check-in aur check-out date select karein");
+      return;
     }
-    axios.post("http://localhost:8080/addbookings",data).then(res=>{
+    
+    const data = {
+      homeId: homeId,
+      checkIn: newCheckIn,
+      checkOut: newCheckOut,
+      guests: guests
+    }
+
+
+    api.post("/addbookings", data).then(res => {
       console.log(res.data.message);
       setErrors("")
       navigate("/mybookings")
-    }).catch(err=>{
-      const message=err.response?.data?.message|| err.message;
+    }).catch(err => {
+      const message = err.response?.data?.message || err.message;
       setErrors(message);
     })
-   }
+  }
 
-
-  if(loading){
+  if (loading) {
     return <div>Loading....</div>
   }
+
   const lat = parseFloat(home.lat) || 28.6139;
   const long = parseFloat(home.long) || 77.2090;
 
@@ -92,7 +96,8 @@ const HomeDetails= ()=>{
         }}>
           <div style={{ width: "100%", height: "420px", borderRadius: "16px", overflow: "hidden", marginBottom: "24px" }}>
             <img 
-              src={`http://localhost:8080${home.photo}`} 
+              
+              src={`${import.meta.env.VITE_API_URL}${home.photo}`} 
               alt={home.title} 
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
@@ -136,7 +141,7 @@ const HomeDetails= ()=>{
           </div>
         </div>
 
-        {/* Right column — sticky booking card */}
+      
         <div style={{
           position: "sticky",
           top: "24px",
@@ -179,25 +184,26 @@ const HomeDetails= ()=>{
               boxShadow: "0 4px 12px rgba(230,30,77,0.35)",
               transition: "transform 0.15s ease, box-shadow 0.15s ease"
             }}
-            onMouseOver={(e) => { e.target.style.transform = "scale(1.02)"; e.target.style.boxShadow = "0 6px 16px rgba(230,30,77,0.45)"; }}
-            onMouseOut={(e) => { e.target.style.transform = "scale(1)"; e.target.style.boxShadow = "0 4px 12px rgba(230,30,77,0.35)"; }}
+            onMouseOver={(e) => { e.currentTarget.style.transform = "scale(1.02)"; e.currentTarget.style.boxShadow = "0 6px 16px rgba(230,30,77,0.45)"; }}
+            onMouseOut={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = "0 4px 12px rgba(230,30,77,0.35)"; }}
           >
             Reserve
           </button>
+          
           {errors && (
-  <p style={{
-    textAlign: "center",
-    fontSize: "13px",
-    color: "#e61e4d",
-    background: "#fff0f2",
-    padding: "10px 12px",
-    borderRadius: "8px",
-    margin: 0,
-    fontWeight: "500"
-  }}>
-    ⚠️ {errors}
-  </p>
-)}
+            <p style={{
+              textAlign: "center",
+              fontSize: "13px",
+              color: "#e61e4d",
+              background: "#fff0f2",
+              padding: "10px 12px",
+              borderRadius: "8px",
+              margin: 0,
+              fontWeight: "500"
+            }}>
+              ⚠️ {errors}
+            </p>
+          )}
 
           <p style={{ textAlign: "center", fontSize: "13px", color: "#717171", margin: 0 }}>
             You won't be charged yet
@@ -224,4 +230,4 @@ const HomeDetails= ()=>{
   )
 }
 
-export default HomeDetails
+export default HomeDetails;

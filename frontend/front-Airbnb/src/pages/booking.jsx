@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react"
-import axios from "axios"
+import api from "../api/axios"
 
 const Mybookings = () => {
   const [bookingHomes, setBookingHomes] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get("http://localhost:8080/mybookings", { withCredentials: true })
+    api.get("/mybookings")
       .then(res => {
         console.log(res.data);
         setBookingHomes(res.data.bookings || []);
@@ -18,9 +18,9 @@ const Mybookings = () => {
       });
   }, []);
   const handleOnCancelBooking=(bookingId)=>{
-    axios.delete(`http://localhost:8080/deleteBooking/${bookingId}`) .then(res => {
+    api.delete(`/deleteBooking/${bookingId}`) .then(res => {
         console.log(res.data);
-        return axios.get("http://localhost:8080/mybookings", { withCredentials: true });
+        return api.get("/mybookings");
       
       }).then(res=>{
         setBookingHomes(res.data.bookings || []);
@@ -78,7 +78,7 @@ const Mybookings = () => {
               }}
             >
               <img
-                src={`http://localhost:8080${booking.home?.photo}`}
+                src={`${import.meta.env.VITE_API_URL}${booking.home?.photo}`}
                 alt={booking.home?.title}
                 style={{
                   width: "280px",

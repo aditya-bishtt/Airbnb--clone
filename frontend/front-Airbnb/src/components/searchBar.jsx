@@ -114,7 +114,7 @@ if(value.trim().length>2){
   onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#fff"}
 >
   <img
-    src={`http://localhost:8080${home.photo}`}
+    src={`${import.meta.env.VITE_API_URL}${home.photo}`}
     alt={home.title}
     style={{
       width: "48px",

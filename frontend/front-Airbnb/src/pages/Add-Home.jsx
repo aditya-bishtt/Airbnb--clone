@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import axios from "axios"
+import api from "../api/axios"
 let currentAbortController = null;
   let debounceTimer = null;
 const AddHome = () => {
@@ -24,11 +24,11 @@ const AddHome = () => {
   const [predictions, setPredictions] = useState([]);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-// const [coordinates,setCoordinates]=useState({lat:"",lon:""});
+
   useEffect(() => {
     if (isEditMode) {
       setLoading(true);
-      axios.get(`http://localhost:8080/host/edit-home/${id}`, { withCredentials: true })
+      api.get(`/host/edit-home/${id}`)
         .then(res => {
           const home = res.data.home;
           setFormData({
@@ -98,7 +98,7 @@ const handleLocationChange = (e) => {
             setIsDropdownVisible(false);
           }
         })
-    }, 400); // 400ms wait after user stops typing
+    }, 400);
   } else {
     setPredictions([]);
     setIsDropdownVisible(false);
@@ -122,9 +122,8 @@ const handleLocationChange = (e) => {
       data.append("photo", photoInput.files[0]);
     }
     
-    const url = isEditMode ? `http://localhost:8080/host/edit-home/${id}` : "http://localhost:8080/host/add-home";
-    axios.post(url, data, {
-      withCredentials: true,
+    const url = isEditMode ? `/host/edit-home/${id}` : "/host/add-home";
+    api.post(url, data, {
       headers: { "Content-Type": "multipart/form-data" }
     }).then(res => {
       console.log("property adeed")
@@ -169,7 +168,6 @@ const handleLocationChange = (e) => {
             required />
         </div>
 
-        {/* 🎯 Z-Index ko badha kar 999 kiya taaki layer ekdum upar aa jaye */}
         <div style={{ position: "relative", width: "100%", zIndex: 999 }}>
           <label style={{ fontSize: "13px", fontWeight: "600", display: "block", marginBottom: "6px", color: "#222222" }}>Location / Place</label>
           <input 
@@ -183,18 +181,17 @@ const handleLocationChange = (e) => {
             autoComplete="off"
           />
 
-          {/* 🎯 DROPDOWN STRUCTURE ADJUSTMENT */}
           {isDropdownVisible && predictions.length > 0 && (
             <div style={{
               position: "absolute",
               top: "100%",
               left: 0,
               width: "100%",
-              backgroundColor: "#ffffff", // Pure fallback white
+              backgroundColor: "#ffffff",
               border: "1px solid #ccc",
               borderRadius: "8px",
-              boxShadow: "0 8px 24px rgba(0,0,0,0.2)", // Zyada gehri shadow taaki alag se dikhe
-              zIndex: 99999, // Sabse high layer priority
+              boxShadow: "0 8px 24px rgba(0,0,0,0.2)",
+              zIndex: 99999,
               maxHeight: "200px",
               overflowY: "auto",
               boxSizing: "border-box",
@@ -287,7 +284,7 @@ const handleLocationChange = (e) => {
           {isEditMode && formData.oldPhotoUrl && (
             <div style={{ marginBottom: "10px" }}>
               <img
-                src={`http://localhost:8080/${formData.oldPhotoUrl}`}
+                src={`${import.meta.env.VITE_API_URL}/${formData.oldPhotoUrl}`}
                 alt="Current Home"
                 style={{ width: "100px", height: "70px", objectFit: "cover", borderRadius: "6px" }}
               />

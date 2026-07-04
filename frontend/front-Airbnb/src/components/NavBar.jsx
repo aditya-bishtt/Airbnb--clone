@@ -3,13 +3,14 @@ import { useNavigate } from "react-router-dom"
 import {useSelector} from "react-redux"
 import {logout} from "../store/authSlice"
 import {useDispatch} from "react-redux"
-import axios from "axios"
+import api from "../api/axios"
+
 const NavBar = () => {
   const dispatch=useDispatch();
   const navigate=useNavigate();
   const handleOnLogout=(e)=>{
     e.preventDefault()
-    axios.post("http://localhost:8080/logout").then((res=>{
+    api.post("/logout").then((res=>{
       console.log(res)
       dispatch(logout())
       navigate("/")

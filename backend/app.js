@@ -3,33 +3,35 @@ require("dotenv").config()
 const express = require("express")
 const mongoose = require("mongoose")
 const authRouter = require("./router/authRouter")
-const storeRouter =require('./router/storeRouter')
-const hostRouter=require('./router/hostRouter')
-const cors =require("cors")
-const app=express();
+const storeRouter = require('./router/storeRouter')
+const hostRouter = require('./router/hostRouter')
+const cors = require("cors")
 const cookieParser = require("cookie-parser")    
- const path =require("path")
+const path = require("path")
 
-const port=8080;
-const DB_PATH="mongodb+srv://aditya:aditya@cluster1.mtfdigo.mongodb.net/newReactairbnb?appName=cluster1"
+const app = express();
+
+
+const port = process.env.PORT; 
+const DB_PATH = process.env.MONGO_URI; 
+
 app.use(cors({
-origin:["http://localhost:5173", "https://airbnb-clone-five-mauve.vercel.app"],
-credentials:true
-}
-  
-));
+  origin: [process.env.CLIENT_URL_LOCAL, process.env.CLIENT_URL_PROD],
+  credentials: true
+}));
 
 app.use(express.json())
 app.use(cookieParser())  
-app.use("/uploads",express.static(path.join(__dirname,"uploads")))
-app.use( authRouter)
+app.use("/uploads", express.static(path.join(__dirname, "uploads")))
+app.use(authRouter)
 app.use(storeRouter)
-app.use("/host",hostRouter)
+app.use("/host", hostRouter)
 
-mongoose.connect(DB_PATH).then(()=>{
+mongoose.connect(DB_PATH).then(() => {
   console.log("Connected to mongodb ")
-  app.listen(port,()=>{
-    console.log("server start on 8080")
-     console.log(`http://localhost:${port}`)
+  app.listen(port, () => {
+    console.log(`Server started successfully`)
   })
+}).catch(err => {
+  console.error("Connection error:", err.message)
 })

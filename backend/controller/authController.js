@@ -99,7 +99,7 @@ if (!isMatch){
 
 const token =jwt.sign(
   {userId:user._id,userType:user.userType},
-  "Aditya@29623528512307",
+  process.env.PASSWORD_,
   {expiresIn:"1h"}
 )
 res.status(200).cookie("token",token,{httpOnly: true,

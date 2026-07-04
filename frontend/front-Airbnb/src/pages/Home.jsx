@@ -1,9 +1,10 @@
-import { useEffect,useState } from "react"
-import axios from "axios"
+import { useEffect, useState } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { fetchHomeStart, fetchHomeSuccess, fetchHomeFaliure } from "../store/homeSlice"
 import { Link, useNavigate } from "react-router-dom" 
 import SearchBar from "../components/searchBar"
+
+import api from "../api/axios"
 
 const categories = [
   { label: "All", emoji: "🌍" },
@@ -15,40 +16,42 @@ const categories = [
   { label: "Mountain", emoji: "⛰️" },
 ]
 
-
 const Home = () => {
   const dispatch = useDispatch();
   const { registeredHomes, loading } = useSelector(store => store.homes)
   const { isLoggedIn, user } = useSelector((store) => store.auth)
   const navigate = useNavigate()
-const [selectedCategory,setSelectedCategory]=useState("All")
+  const [selectedCategory, setSelectedCategory] = useState("All")
+
   useEffect(() => {
     dispatch(fetchHomeStart())
-    axios.get("http://localhost:8080/").then(res => {
+
+    api.get("/").then(res => {
       console.log(res.data.registeredHomes)
       dispatch(fetchHomeSuccess(res.data.registeredHomes || []))
     }).catch(err => {
-      console.log(err.response.data.message || err.message)
+      console.log(err.response?.data?.message || err.message)
       dispatch(fetchHomeFaliure())
     })
   }, [dispatch])
 
   const handleToAddFavourite = (e, HomeId) => {
     e.preventDefault();
-    axios.post(`http://localhost:8080/favourites/${HomeId}`, {}).then((res) => {
+   
+    api.post(`/favourites/${HomeId}`, {}).then((res) => {
       console.log(res.data.message)
       navigate("/favourites")
     }).catch(err => {
-      console.log(err.response.data.message || err.message)
+      console.log(err.response?.data?.message || err.message)
     })    
   }
-  // const  filteredHomes=useState([]);
-  const   filteredHomes=selectedCategory==="All"?registeredHomes:registeredHomes.filter(home=>home.category===selectedCategory);
-  
+
+  const filteredHomes = selectedCategory === "All" 
+    ? registeredHomes 
+    : registeredHomes.filter(home => home.category === selectedCategory);
 
   return (
     <div style={{ fontFamily: "sans-serif" }}>
-
 
       <div style={{
         position: "relative",
@@ -61,7 +64,6 @@ const [selectedCategory,setSelectedCategory]=useState("All")
         marginBottom: 0
       }}>
 
-
         <div style={{
           position: "absolute",
           left: 0,
@@ -72,7 +74,6 @@ const [selectedCategory,setSelectedCategory]=useState("All")
           pointerEvents: "none"
         }} />
 
-      
         <div style={{
           position: "relative",
           zIndex: 2,
@@ -92,11 +93,7 @@ const [selectedCategory,setSelectedCategory]=useState("All")
             Discover unique homes and unforgettable experiences
           </p>
 
-       
-        <SearchBar registredHomes={registeredHomes}></SearchBar>
-            
-          
-          {/* </div> */}
+          <SearchBar registredHomes={registeredHomes}></SearchBar>
         </div>
       </div>
 
@@ -108,26 +105,30 @@ const [selectedCategory,setSelectedCategory]=useState("All")
         padding: "18px 0 28px 0",
         borderBottom: "1px solid #eee"
       }}>
-        {categories.map((cat, i) => (
-        
-          <div key={cat.label}  onClick={()=>setSelectedCategory(cat.label)}style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "6px",
-            cursor: "pointer",
-            color: i === 0 ? "#222" : "#717171",
-            borderBottom: i === 0 ? "2px solid #222" : "2px solid transparent",
-            paddingBottom: "6px",
-            fontSize: "13px"
-          }}>
+        {categories.map((cat) => (
+          <div 
+            key={cat.label}  
+            onClick={() => setSelectedCategory(cat.label)}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "6px",
+              cursor: "pointer",
+              // 4. Category selection indicator ko dynamic kiya (i === 0 fix hata kar)
+              color: selectedCategory === cat.label ? "#222" : "#717171",
+              borderBottom: selectedCategory === cat.label ? "2px solid #222" : "2px solid transparent",
+              paddingBottom: "6px",
+              fontSize: "13px",
+              transition: "all 0.15s ease"
+            }}
+          >
             <span style={{ fontSize: "20px" }}>{cat.emoji}</span>
             {cat.label}
           </div>
         ))}
       </div>
 
-  
       <div style={{ width: "100%", maxWidth: "1280px", margin: "2rem auto", padding: "0 2rem", boxSizing: "border-box" }}>
 
         <div style={{ 
@@ -138,8 +139,11 @@ const [selectedCategory,setSelectedCategory]=useState("All")
           justifyContent: "start"
         }}>
           
-          {loading&&filteredHomes.length === 0 ? (
-            <p style={{ gridColumn: "1 / -1", textAlign: "center" }}>no home</p>
+
+          {loading && filteredHomes.length === 0 ? (
+            <p style={{ gridColumn: "1 / -1", textAlign: "center" }}>Loading homes...</p>
+          ) : !loading && filteredHomes.length === 0 ? (
+            <p style={{ gridColumn: "1 / -1", textAlign: "center", color: "#717171" }}>No homes found in this category.</p>
           ) : (
             filteredHomes.map(home => (
               <div 
@@ -152,10 +156,10 @@ const [selectedCategory,setSelectedCategory]=useState("All")
                 }}
               >
                 
-         \
                 <div style={{ position: "relative", width: "100%", height: "210px", borderRadius: "14px", overflow: "hidden", marginBottom: "10px" }}>
                   <img 
-                    src={`http://localhost:8080${home.photo}`} 
+      
+                    src={`${import.meta.env.VITE_API_URL}${home.photo}`} 
                     alt={home.title} 
                     style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.3s ease" }}
                     onMouseOver={(e) => e.currentTarget.style.transform = "scale(1.05)"}

@@ -1,56 +1,57 @@
-import { useRef,useState} from "react"
-import axios from "axios"
-import {useNavigate,Link} from "react-router-dom"
+import { useRef, useState } from "react"
+import { useNavigate, Link } from "react-router-dom"
+
+import api from "../api/axios"
+
 const Register = () => {
-const userNameRef = useRef()
-const lastNameRef = useRef()
-const emailRef = useRef()
-const passwordRef = useRef()
-const passwordConfirmRef = useRef()
+  const userNameRef = useRef()
+  const lastNameRef = useRef()
+  const emailRef = useRef()
+  const passwordRef = useRef()
+  const passwordConfirmRef = useRef()
 
-const[userType,setUserType]=useState("guest")
+  const [userType, setUserType] = useState("guest")
+  const navigate = useNavigate();
+  const [errors, setErrors] = useState([])
+  const [oldInput, setOldInput] = useState({})
 
-
-const navigate=useNavigate();
-const [errors,setErrors]=useState([])
-const [oldInput,setOldInput]=useState({})
-
-  const handleOnSubmit=(e)=>{
+  const handleOnSubmit = (e) => {
     e.preventDefault();
-    const data={
-      userName:userNameRef.current.value,
-      lastName:lastNameRef.current.value,
-      email:emailRef.current.value,
-      password:passwordRef.current.value,
-      passwordConfirm:passwordConfirmRef.current.value,
-      userType:userType,
-      
-
+    const data = {
+      userName: userNameRef.current.value,
+      lastName: lastNameRef.current.value,
+      email: emailRef.current.value,
+      password: passwordRef.current.value,
+      passwordConfirm: passwordConfirmRef.current.value,
+      userType: userType,
     }
-    axios.post("http://localhost:8080/signup",data).then(result=>{
+    
+
+    api.post("/signup", data).then(result => {
       console.log(result)
       navigate("/login")
-    }).catch(err=>{
-      setErrors(err.response.data.errors)
-      setOldInput(err.response.data.oldInput)
-      setUserType(err.response.data.oldInput.userType)
+    }).catch(err => {
+      
+      setErrors(err.response?.data?.errors || [err.message])
+      setOldInput(err.response?.data?.oldInput || {})
+      if (err.response?.data?.oldInput?.userType) {
+        setUserType(err.response.data.oldInput.userType)
+      }
     })
-    
-    
-    }
+  }
 
   return (
     <div style={{ maxWidth: "560px", margin: "2rem auto", background: "white", border: "1px solid #e0e0e0", borderRadius: "12px", padding: "2rem 2.5rem", boxShadow: "0 2px 12px rgba(0,0,0,0.08)" }}>
       
       <h2 style={{ fontSize: "22px", fontWeight: "600", margin: "0 0 0.25rem" }}>Create your account</h2>
       <p style={{ fontSize: "14px", color: "#717171", margin: "0 0 1.75rem" }}>Join Airbnb — it's free</p>
+      
       <div>
-
         {errors.length > 0 && (
-  <ul style={{ background: "#fff5f5", border: "1px solid #ffcccc", borderRadius: "8px", padding: "0.75rem 1rem 0.75rem 1.5rem", marginBottom: "1rem", color: "#cc0000", fontSize: "13px" }}>
-    {errors.map((err, i) => <li key={i}>{err}</li>)}
-  </ul>
-)}
+          <ul style={{ background: "#fff5f5", border: "1px solid #ffcccc", borderRadius: "8px", padding: "0.75rem 1rem 0.75rem 1.5rem", marginBottom: "1rem", color: "#cc0000", fontSize: "13px" }}>
+            {errors.map((err, i) => <li key={i}>{err}</li>)}
+          </ul>
+        )}
       </div>
 
       <form onSubmit={handleOnSubmit}>
@@ -58,17 +59,17 @@ const [oldInput,setOldInput]=useState({})
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "1rem" }}>
           <div>
             <label style={{ fontSize: "13px", fontWeight: "500", display: "block", marginBottom: "6px" }}>First name</label>
-            <input type="text" key={oldInput.userName} ref={userNameRef} placeholder="Aditya" className="form-control" defaultValue={oldInput.userName|| ""}/>
+            <input type="text" key={oldInput.userName} ref={userNameRef} placeholder="Aditya" className="form-control" defaultValue={oldInput.userName || ""}/>
           </div>
           <div>
             <label style={{ fontSize: "13px", fontWeight: "500", display: "block", marginBottom: "6px" }}>Last name</label>
-            <input type="text" ref={lastNameRef} key={oldInput.lastName} placeholder="Bisht" className="form-control" defaultValue={oldInput.lastName|| ""} />
+            <input type="text" ref={lastNameRef} key={oldInput.lastName} placeholder="Bisht" className="form-control" defaultValue={oldInput.lastName || ""} />
           </div>
         </div>
 
         <div style={{ marginBottom: "1rem" }}>
           <label style={{ fontSize: "13px", fontWeight: "500", display: "block", marginBottom: "6px" }}>Email address</label>
-          <input type="email" ref={emailRef}  key={oldInput.email} placeholder="123@example.com" className="form-control" defaultValue={oldInput.email|| ""}/>
+          <input type="email" ref={emailRef} key={oldInput.email} placeholder="123@example.com" className="form-control" defaultValue={oldInput.email || ""}/>
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "1rem" }}>
@@ -86,11 +87,11 @@ const [oldInput,setOldInput]=useState({})
           <label style={{ fontSize: "13px", fontWeight: "500", display: "block", marginBottom: "8px" }}>I am a</label>
           <div style={{ display: "flex", gap: "12px" }}>
             <label style={{ flex: 1, border: "1.5px solid #e0e0e0", borderRadius: "8px", padding: "10px 14px", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", fontSize: "14px" }}>
-              <input type="radio" onChange={()=>{setUserType("guest")}} value="guest" checked={userType==="guest"}  style={{ accentColor: "#ff385c" }} />
+              <input type="radio" onChange={() => { setUserType("guest") }} value="guest" checked={userType === "guest"} style={{ accentColor: "#ff385c" }} />
               🧳 Guest
             </label>
             <label style={{ flex: 1, border: "1.5px solid #e0e0e0", borderRadius: "8px", padding: "10px 14px", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", fontSize: "14px" }}>
-              <input type="radio"  onChange={()=>{setUserType("host")}} value="host"checked={userType==="host"} style={{ accentColor: "#ff385c" }} />
+              <input type="radio" onChange={() => { setUserType("host") }} value="host" checked={userType === "host"} style={{ accentColor: "#ff385c" }} />
               🏠 Host
             </label>
           </div>
@@ -99,12 +100,12 @@ const [oldInput,setOldInput]=useState({})
         <hr style={{ border: "none", borderTop: "1px solid #f0f0f0", margin: "1.25rem 0" }} />
 
         <div style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
-          <input type="checkbox"   required name="terms" id="terms" style={{ marginTop: "3px", accentColor: "#ff385c", width: "16px", height: "16px", flexShrink: 0 }} />
-          <label htmlFor="terms"   style={{ fontSize: "13px", color: "#717171", lineHeight: "1.5", cursor: "pointer" }}>
+          <input type="checkbox" required name="terms" id="terms" style={{ marginTop: "3px", accentColor: "#ff385c", width: "16px", height: "16px", flexShrink: 0 }} />
+          <label htmlFor="terms" style={{ fontSize: "13px", color: "#717171", lineHeight: "1.5", cursor: "pointer" }}>
             I agree to the{" "}
-            <text style={{ color: "#ff385c", textDecoration: "underline" }}>Terms & Conditions</text>
+            <span style={{ color: "#ff385c", textDecoration: "underline" }}>Terms & Conditions</span>
             {" "}and{" "}
-            <text href="#" style={{ color: "#ff385c", textDecoration: "underline" }}>Privacy Policy</text>
+            <span style={{ color: "#ff385c", textDecoration: "underline" }}>Privacy Policy</span>
           </label>
         </div> 
 
@@ -122,4 +123,4 @@ const [oldInput,setOldInput]=useState({})
   )
 }
 
-export default Register
+export default Register;

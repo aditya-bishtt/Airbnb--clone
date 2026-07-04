@@ -9,7 +9,7 @@ import 'leaflet/dist/leaflet.css';
 import App from './App.jsx'
 import { Provider } from "react-redux"       
 import store from "./store/store.js"  
-import ProtectedRoute from "./components/Protected.jsx"
+import ProtectedRoute, { GuestOnlyRoute } from "./components/Protected.jsx"
 
 import api from "./api/axios"  
 import "bootstrap/dist/css/bootstrap.min.css" 
@@ -39,8 +39,8 @@ const router = createBrowserRouter([{
   element: <App />,
   children: [
     { path: "/", element: <Home /> },
-    { path: "/login", element: <Login /> },
-    { path: "/signup", element: <Register /> },
+    { path: "/login", element: <GuestOnlyRoute><Login /></GuestOnlyRoute> },
+{ path: "/signup", element: <GuestOnlyRoute><Register /></GuestOnlyRoute> },
     { path: "/details/:id", element: <HomeDetails /> },
     { path: "/mybookings", element: <MyBookings /> },
     { 

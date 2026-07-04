@@ -12,4 +12,15 @@ if(isChecking){return <div style={{ textAlign: "center", marginTop: "3rem" }}>Lo
   }
   return children
 }
+
+
+
+export const GuestOnlyRoute=({children})=>{
+   const { isLoggedIn, isChecking } = useSelector((store) => store.auth)
+   if (isChecking) { return <div style={{ textAlign: "center", marginTop: "3rem" }}>Loading... 🏠</div> }
+  if (isLoggedIn) {
+    return <Navigate to="/" replace />
+  }
+  return children
+}
 export default ProtectedRoute

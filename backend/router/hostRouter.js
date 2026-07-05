@@ -9,6 +9,6 @@ hostRouter.post("/add-home", verifyToken,verifyHost,upload.single('photo'),hostC
 hostRouter.get("/myhomes",verifyToken,verifyHost,hostController.getMyHostHomes)
 hostRouter.get("/edit-home/:id",verifyToken,verifyHost,hostController.geteditHome)
 hostRouter.post("/edit-home/:id", verifyToken,verifyHost,upload.single('photo'),hostController.posteditHome)
-hostRouter.delete("/delete-home/:id",verifyToken,verifyHost,hostController.postDeleteHome)
+hostRouter.post("/delete-home/:id",verifyToken,verifyHost,hostController.postDeleteHome)
 
 module.exports = hostRouter

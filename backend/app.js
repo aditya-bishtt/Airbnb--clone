@@ -31,6 +31,7 @@ mongoose.connect(DB_PATH).then(() => {
   console.log("Connected to mongodb ")
   app.listen(port, () => {
     console.log(`Server started successfully`)
+    console.log("http://localhost:5173")
   })
 }).catch(err => {
   console.error("Connection error:", err.message)

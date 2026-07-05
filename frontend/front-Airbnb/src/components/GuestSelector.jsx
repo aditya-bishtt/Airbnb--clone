@@ -35,15 +35,43 @@ const GuestSelector = ({ onGuestsChange }) => {
 
   return (
     <div ref={dropdownRef} style={{ position: "relative" }}>
+      <style>{`
+        .guest-trigger {
+          border: 1px solid #b0b0b0;
+          border-radius: 8px;
+          padding: 10px 14px;
+          cursor: pointer;
+          font-size: 14px;
+          box-sizing: border-box;
+        }
+        .guest-dropdown {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          margin-top: 4px;
+          width: 280px;
+          max-width: 90vw;
+          background: #ffffff;
+          border: 1px solid #ddd;
+          border-radius: 12px;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+          padding: 16px;
+          z-index: 100;
+          box-sizing: border-box;
+        }
+
+        @media (max-width: 400px) {
+          .guest-dropdown {
+            width: 100%;
+            left: 0;
+            right: 0;
+          }
+        }
+      `}</style>
+
       <div
         onClick={() => setIsOpen(!isOpen)}
-        style={{
-          border: "1px solid #b0b0b0",
-          borderRadius: "8px",
-          padding: "10px 14px",
-          cursor: "pointer",
-          fontSize: "14px"
-        }}
+        className="guest-trigger"
       >
         <div style={{ color: "#717171", fontSize: "12px" }}>Guests</div>
         <div style={{ fontWeight: "600" }}>
@@ -52,19 +80,7 @@ const GuestSelector = ({ onGuestsChange }) => {
       </div>
 
       {isOpen && (
-        <div style={{
-          position: "absolute",
-          top: "100%",
-          left: 0,
-          marginTop: "4px",
-          width: "280px",
-          background: "#ffffff",
-          border: "1px solid #ddd",
-          borderRadius: "12px",
-          boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
-          padding: "16px",
-          zIndex: 100
-        }}>
+        <div className="guest-dropdown">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
             <div>
               <div style={{ fontWeight: "600", fontSize: "14px" }}>Adults</div>

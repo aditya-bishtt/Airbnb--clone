@@ -33,105 +33,130 @@ if(value.trim().length>2){
       setShowSuggestions(false)}
   }
   return (
-    <div style={{
-      marginTop: "28px",
-      backgroundColor: "#fff",
-      borderRadius: "999px",
-      padding: "10px 10px 10px 24px",
+    <div style={{ position: "relative", width: "90%", maxWidth: "420px" }}>
+      <style>{`
+        .searchbar-box {
+          margin-top: 28px;
+          background-color: #fff;
+          border-radius: 999px;
+          padding: 10px 10px 10px 24px;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+          width: 100%;
+          box-sizing: border-box;
+        }
+        .searchbar-input {
+          border: none;
+          outline: none;
+          flex-grow: 1;
+          font-size: 15px;
+          color: #222;
+          background: transparent;
+          min-width: 0;
+        }
+        .searchbar-button {
+          background-color: #FF385C;
+          border: none;
+          border-radius: 50%;
+          width: 40px;
+          height: 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: #fff;
+          font-size: 16px;
+          flex-shrink: 0;
+        }
+        .searchbar-suggestions {
+          position: absolute;
+          top: calc(100% + 8px);
+          left: 0;
+          right: 0;
+          background-color: #fff;
+          border-radius: 14px;
+          box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+          z-index: 10;
+          overflow: hidden;
+          text-align: left;
+        }
+
+        @media (max-width: 480px) {
+          .searchbar-box {
+            margin-top: 18px;
+            padding: 8px 8px 8px 16px;
+          }
+          .searchbar-input {
+            font-size: 14px;
+          }
+          .searchbar-button {
+            width: 34px;
+            height: 34px;
+            font-size: 14px;
+          }
+        }
+      `}</style>
+
+      <div className="searchbar-box">
+        <input
+          type="text"
+          placeholder="Search destinations"
+          value={searchQuery}
+          onChange={handleSearchChange}
+          onFocus={() => searchQuery.trim().length > 0 && setShowSuggestions(true)}
+          onBlur={() => setTimeout(() => setShowSuggestions(false), 300)}
+          className="searchbar-input"
+        />
+        <button
+          type="button"
+          className="searchbar-button"
+        >
+          🔍
+        </button>
+
+        {showSuggestions && suggestions.length > 0 && (
+          <div className="searchbar-suggestions">
+            {suggestions.map(home => (
+             <Link
+    key={home._id}
+    to={`/details/${home._id}`}
+    onClick={() => setShowSuggestions(false)}
+    style={{
       display: "flex",
       alignItems: "center",
       gap: "12px",
-      boxShadow: "0 6px 20px rgba(0,0,0,0.25)",
-      width: "90%",
-      maxWidth: "420px",
-      position: "relative"
-    }}>
-      <input
-        type="text"
-        placeholder="Search destinations"
-        value={searchQuery}
-        onChange={handleSearchChange}
-        onFocus={() => searchQuery.trim().length > 0 && setShowSuggestions(true)}
-        onBlur={() => setTimeout(() => setShowSuggestions(false), 300)}
-        style={{
-          border: "none",
-          outline: "none",
-          flexGrow: 1,
-          fontSize: "15px",
-          color: "#222",
-          background: "transparent"
-        }}
-      />
-      <button
-        type="button"
-        style={{
-          backgroundColor: "#FF385C",
-          border: "none",
-          borderRadius: "50%",
-          width: "40px",
-          height: "40px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          cursor: "pointer",
-          color: "#fff",
-          fontSize: "16px"
-        }}
-      >
-        🔍
-      </button>
-
-      {showSuggestions && suggestions.length > 0 && (
-        <div style={{
-          position: "absolute",
-          top: "calc(100% + 8px)",
-          left: 0,
-          right: 0,
-          backgroundColor: "#fff",
-          borderRadius: "14px",
-          boxShadow: "0 6px 20px rgba(0,0,0,0.2)",
-          zIndex: 10,
-          overflow: "hidden",
-          textAlign: "left"
-        }}>
-          {suggestions.map(home => (
-           <Link
-  key={home._id}
-  to={`/details/${home._id}`}
-  onClick={() => setShowSuggestions(false)}
-  style={{
-    display: "flex",
-    alignItems: "center",
-    gap: "12px",
-    padding: "10px 18px",
-    cursor: "pointer",
-    fontSize: "14px",
-    color: "#222",
-    borderBottom: "1px solid #f0f0f0",
-    textDecoration: "none"
-  }}
-  onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#f7f7f7"}
-  onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#fff"}
->
-  <img
-    src={`${import.meta.env.VITE_API_URL}${home.photo}`}
-    alt={home.title}
-    style={{
-      width: "48px",
-      height: "48px",
-      borderRadius: "8px",
-      objectFit: "cover",
-      flexShrink: 0
+      padding: "10px 18px",
+      cursor: "pointer",
+      fontSize: "14px",
+      color: "#222",
+      borderBottom: "1px solid #f0f0f0",
+      textDecoration: "none"
     }}
-  />
-  <div style={{ display: "flex", flexDirection: "column" }}>
-    <span style={{ fontWeight: "600" }}>{home.title}</span>
-    <span style={{ fontSize: "12px", color: "#717171" }}>📍 {home.place}</span>
-  </div>
-</Link>
-          ))}
-        </div>
-      )}
+    onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#f7f7f7"}
+    onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#fff"}
+  >
+    <img
+      src={home.photo}
+      alt={home.title}
+      style={{
+        width: "48px",
+        height: "48px",
+        borderRadius: "8px",
+        objectFit: "cover",
+        flexShrink: 0
+      }}
+    />
+    <div style={{ display: "flex", flexDirection: "column" }}>
+      <span style={{ fontWeight: "600" }}>{home.title}</span>
+      <span style={{ fontSize: "12px", color: "#717171" }}>📍 {home.place}</span>
+    </div>
+  </Link>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 

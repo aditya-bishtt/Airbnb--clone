@@ -26,7 +26,7 @@ Home.findOne({_id:homeId,owner:loggedInHostId}).then((home)=>{
   if(!home){
     return res.status(404).json({message:"Home not found or you are not owner of this house"});
   }
-const photoPath=req.file? `/uploads/${req.file.filename}`:home.photo;
+const photoPath = req.file ? req.file.path : home.photo;
 home.title=title||home.title;
 home.place =place|| home.place;
 home.price=price||home.price;
@@ -50,7 +50,7 @@ return res.status(200).json({success:true,result:updatedResult,message:"suceesfl
 
 exports.postaddHome=(req,res,next)=>{
 const {title,place,price,rating,description,category,lat,long}=req.body;
-const photoPath=req.file? `/uploads/${req.file.filename}`:"";
+const photoPath = req.file ? req.file.path : "";
 const home=new Home({title,place,price,rating,photo:photoPath,description,owner:req.user.userId,category,lat,long})
 home.save().then((result)=>{
   res.status(201).json({result:result,message:"Home added sucesfully"})

@@ -1,4 +1,6 @@
 const multer=require("multer")
+const cloudinary = require("../config/cloudinary")
+const { CloudinaryStorage } = require("multer-storage-cloudinary")
 const randomString=(length)=>{
   const characters="abcdefghijklmnopqrstuvwxyz"
   let result=""
@@ -7,12 +9,12 @@ const randomString=(length)=>{
   }
   return result;
 }
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/"); 
-  },
-  filename: (req, file, cb) => {
-    cb(null, randomString(10) + "-" + file.originalname);
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "airbnb-clone",
+    allowed_formats: ["jpg", "jpeg", "png"],
+    public_id: (req, file) => randomString(10),
   }
 });
 const fileFilter = (req, file, cb) => {

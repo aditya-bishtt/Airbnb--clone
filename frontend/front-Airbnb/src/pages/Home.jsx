@@ -53,16 +53,95 @@ const Home = () => {
   return (
     <div style={{ fontFamily: "sans-serif" }}>
 
-      <div style={{
-        position: "relative",
-        width: "100%",
-        height: "460px",
-        overflow: "hidden",
-        backgroundImage: "linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.25)), url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=1600&auto=format&fit=crop')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        marginBottom: 0
-      }}>
+      <style>{`
+        .home-hero {
+          position: relative;
+          width: 100%;
+          height: 460px;
+          overflow: hidden;
+          background-image: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.25)), url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=1600&auto=format&fit=crop');
+          background-size: cover;
+          background-position: center;
+        }
+        .home-hero-title {
+          font-size: 44px;
+          font-weight: 800;
+          margin: 0;
+          text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+        }
+        .home-hero-subtitle {
+          font-size: 16px;
+          margin-top: 10px;
+          opacity: 0.95;
+          text-shadow: 0 1px 6px rgba(0,0,0,0.4);
+        }
+        .home-categories {
+          display: flex;
+          justify-content: center;
+          gap: 36px;
+          flex-wrap: wrap;
+          padding: 18px 16px 28px 16px;
+          border-bottom: 1px solid #eee;
+        }
+        .home-content {
+          width: 100%;
+          max-width: 1280px;
+          margin: 2rem auto;
+          padding: 0 2rem;
+          box-sizing: border-box;
+        }
+        .home-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+          gap: 28px;
+          width: 100%;
+          justify-content: start;
+        }
+
+        @media (max-width: 768px) {
+          .home-hero {
+            height: 340px;
+          }
+          .home-hero-title {
+            font-size: 30px;
+          }
+          .home-hero-subtitle {
+            font-size: 14px;
+          }
+          .home-categories {
+            gap: 20px;
+            padding: 14px 10px 20px 10px;
+            overflow-x: auto;
+            justify-content: flex-start;
+            flex-wrap: nowrap;
+          }
+          .home-content {
+            padding: 0 1.25rem;
+            margin: 1.5rem auto;
+          }
+          .home-grid {
+            gap: 18px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .home-hero {
+            height: 300px;
+          }
+          .home-hero-title {
+            font-size: 24px;
+          }
+          .home-content {
+            padding: 0 0.9rem;
+          }
+          .home-grid {
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+          }
+        }
+      `}</style>
+
+      <div className="home-hero">
 
         <div style={{
           position: "absolute",
@@ -86,10 +165,10 @@ const Home = () => {
           color: "#fff",
           padding: "0 20px"
         }}>
-          <h1 style={{ fontSize: "44px", fontWeight: "800", margin: 0, textShadow: "0 2px 10px rgba(0,0,0,0.4)" }}>
+          <h1 className="home-hero-title">
             Find your next stay
           </h1>
-          <p style={{ fontSize: "16px", marginTop: "10px", opacity: 0.95, textShadow: "0 1px 6px rgba(0,0,0,0.4)" }}>
+          <p className="home-hero-subtitle">
             Discover unique homes and unforgettable experiences
           </p>
 
@@ -97,14 +176,7 @@ const Home = () => {
         </div>
       </div>
 
-      <div style={{
-        display: "flex",
-        justifyContent: "center",
-        gap: "36px",
-        flexWrap: "wrap",
-        padding: "18px 0 28px 0",
-        borderBottom: "1px solid #eee"
-      }}>
+      <div className="home-categories">
         {categories.map((cat) => (
           <div 
             key={cat.label}  
@@ -120,7 +192,8 @@ const Home = () => {
               borderBottom: selectedCategory === cat.label ? "2px solid #222" : "2px solid transparent",
               paddingBottom: "6px",
               fontSize: "13px",
-              transition: "all 0.15s ease"
+              transition: "all 0.15s ease",
+              flexShrink: 0
             }}
           >
             <span style={{ fontSize: "20px" }}>{cat.emoji}</span>
@@ -129,15 +202,9 @@ const Home = () => {
         ))}
       </div>
 
-      <div style={{ width: "100%", maxWidth: "1280px", margin: "2rem auto", padding: "0 2rem", boxSizing: "border-box" }}>
+      <div className="home-content">
 
-        <div style={{ 
-          display: "grid", 
-          gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", 
-          gap: "28px", 
-          width: "100%",
-          justifyContent: "start"
-        }}>
+        <div className="home-grid">
           
 
           {loading && filteredHomes.length === 0 ? (
@@ -159,7 +226,7 @@ const Home = () => {
                 <div style={{ position: "relative", width: "100%", height: "210px", borderRadius: "14px", overflow: "hidden", marginBottom: "10px" }}>
                   <img 
       
-                    src={`${import.meta.env.VITE_API_URL}${home.photo}`} 
+                    src={home.photo} 
                     alt={home.title} 
                     style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.3s ease" }}
                     onMouseOver={(e) => e.currentTarget.style.transform = "scale(1.05)"}

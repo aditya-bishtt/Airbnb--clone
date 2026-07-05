@@ -23,9 +23,11 @@ app.use(cors({
 app.use(express.json())
 app.use(cookieParser())  
 app.use("/uploads", express.static(path.join(__dirname, "uploads")))
-app.use(authRouter)
-app.use(storeRouter)
-app.use("/host", hostRouter)
+
+
+app.use("/api", authRouter)
+app.use("/api", storeRouter)
+app.use("/api/host", hostRouter)
 
 mongoose.connect(DB_PATH).then(() => {
   console.log("Connected to mongodb ")

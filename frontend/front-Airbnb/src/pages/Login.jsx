@@ -12,14 +12,20 @@ const Login = () => {
   const [errors, setErrors] = useState([])
   const [oldInput, setOldInput] = useState({})
   const dispatch = useDispatch();
+  
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    setIsSubmitting(true);
+    setErrors([]);
+
     const data = {
       email: emailUseRef.current.value,
       password: passwordUseRef.current.value
     }
-
 
     api.post("/login", data)
       .then(result => {
@@ -27,10 +33,11 @@ const Login = () => {
           userId: result.data.userId,
           userType: result.data.userType
         }))
+        setIsSubmitting(false); // Task poora hua
         navigate("/")
       })
       .catch(err => {
-       
+        setIsSubmitting(false); 
         setErrors(err.response?.data?.errors || [err.message]);
         setOldInput(err.response?.data?.oldInput || {})
       })
@@ -91,8 +98,24 @@ const Login = () => {
             <input type="password" placeholder="Enter your password" key={oldInput.password} defaultValue={oldInput.password || ""} className="form-control" ref={passwordUseRef} />
           </div>
 
-          <button type="submit" style={{ width: "100%", marginTop: "1.25rem", padding: "12px", background: "#ff385c", color: "white", border: "none", borderRadius: "8px", fontSize: "15px", fontWeight: "600", cursor: "pointer" }}>
-            Log in
+          
+          <button 
+            type="submit" 
+            disabled={isSubmitting}
+            style={{ 
+              width: "100%", 
+              marginTop: "1.25rem", 
+              padding: "12px", 
+              background: isSubmitting ? "#ff8099" : "#ff385c", 
+              color: "white", 
+              border: "none", 
+              borderRadius: "8px", 
+              fontSize: "15px", 
+              fontWeight: "600", 
+              cursor: isSubmitting ? "not-allowed" : "pointer" 
+            }}
+          >
+            {isSubmitting ? "Logging in..." : "Log in"}
           </button>
         </form>
 

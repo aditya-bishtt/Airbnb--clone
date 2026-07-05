@@ -14,9 +14,17 @@ const Register = () => {
   const navigate = useNavigate();
   const [errors, setErrors] = useState([])
   const [oldInput, setOldInput] = useState({})
+  
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
+    
+  
+    setIsSubmitting(true);
+    setErrors([]); 
+
     const data = {
       userName: userNameRef.current.value,
       lastName: lastNameRef.current.value,
@@ -26,12 +34,12 @@ const Register = () => {
       userType: userType,
     }
     
-
     api.post("/signup", data).then(result => {
       console.log(result)
+      setIsSubmitting(false); // Task successful
       navigate("/login")
     }).catch(err => {
-      
+      setIsSubmitting(false);
       setErrors(err.response?.data?.errors || [err.message])
       setOldInput(err.response?.data?.oldInput || {})
       if (err.response?.data?.oldInput?.userType) {
@@ -146,8 +154,24 @@ const Register = () => {
             </label>
           </div> 
 
-          <button type="submit" style={{ width: "100%", marginTop: "1.25rem", padding: "12px", background: "#ff385c", color: "white", border: "none", borderRadius: "8px", fontSize: "15px", fontWeight: "600", cursor: "pointer" }}>
-            Create account
+        
+          <button 
+            type="submit" 
+            disabled={isSubmitting}
+            style={{ 
+              width: "100%", 
+              marginTop: "1.25rem", 
+              padding: "12px", 
+              background: isSubmitting ? "#ff8099" : "#ff385c", 
+              color: "white", 
+              border: "none", 
+              borderRadius: "8px", 
+              fontSize: "15px", 
+              fontWeight: "600", 
+              cursor: isSubmitting ? "not-allowed" : "pointer" 
+            }}
+          >
+            {isSubmitting ? "Creating account..." : "Create account"}
           </button>
 
           <p style={{ textAlign: "center", fontSize: "13px", color: "#717171", marginTop: "1rem" }}>

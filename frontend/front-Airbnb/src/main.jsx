@@ -10,7 +10,7 @@ import App from './App.jsx'
 import { Provider } from "react-redux"       
 import store from "./store/store.js"  
 import ProtectedRoute, { GuestOnlyRoute } from "./components/Protected.jsx"
-
+import NotFound from "./pages/error.jsx"
 import api from "./api/axios"  
 import "bootstrap/dist/css/bootstrap.min.css" 
 import HostHome from "./pages/Host-Home.jsx"
@@ -59,6 +59,7 @@ const router = createBrowserRouter([{
       path: "/favourites", 
       element: <ProtectedRoute allowedType="guest"><FavouriteHomes /></ProtectedRoute>
     },
+    { path: "*", element: <NotFound /> }
   ]
 }])
 

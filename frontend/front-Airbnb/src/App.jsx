@@ -29,13 +29,13 @@ function App() {
   }, [dispatch])
 
 
-  if (isChecking) {
-    return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", fontSize: "18px", fontFamily: "sans-serif" }}>
-        Loading Session... 🔄
-      </div>
-    );
-  }
+  // if (isChecking) {
+    // return (
+    //   <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", fontSize: "18px", fontFamily: "sans-serif" }}>
+    //     Loading Session... 🔄
+    //   </div>
+    // );
+  // }
 
   return (
     <>
